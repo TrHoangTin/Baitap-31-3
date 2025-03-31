@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Display</title>
+    <style>
+        /* CSS cải tiến */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        #menu-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        li:hover {
+            background-color: #f8f9fa;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        /* Menu con thụt vào và khác biệt */
+        ul ul {
+            margin-left: 20px;
+            border-left: 2px solid #007BFF;
+            padding-left: 15px;
+        }
+
+        ul ul li {
+            padding: 8px 10px;
+            font-size: 1rem;
+        }
+
+        ul ul a {
+            color: #555;
+        }
+
+        ul ul a:hover {
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+    <h1>Menu</h1>
+    <div id="menu-container"></div>
+
+    <script>
+        // Hàm gọi API và hiển thị menu
+        async function fetchMenu() {
+            try {
+                const response = await fetch('http://localhost:3000/api/menu');
+                const menuData = await response.json();
+                displayMenu(menuData);
+            } catch (error) {
+                console.error('Error fetching menu:', error);
+            }
+        }
+
+        // Hàm hiển thị menu theo cấp cha-con
+        function displayMenu(menuItems) {
+            const container = document.getElementById('menu-container');
+            const ul = document.createElement('ul'); // Level 1
+
+            menuItems.forEach(item => {
+                const li = document.createElement('li'); // Level 2
+                const a = document.createElement('a');
+                a.href = item.url;
+                a.textContent = item.text;
+                li.appendChild(a);
+
+                // Nếu có menu con (children), thêm ul mới bên trong li
+                if (item.children && item.children.length > 0) {
+                    const childUl = document.createElement('ul');
+                    item.children.forEach(child => {
+                        const childLi = document.createElement('li');
+                        const childA = document.createElement('a');
+                        childA.href = child.url;
+                        childA.textContent = child.text;
+                        childLi.appendChild(childA);
+                        childUl.appendChild(childLi);
+                    });
+                    li.appendChild(childUl);
+                }
+
+                ul.appendChild(li);
+            });
+
+            container.appendChild(ul);
+        }
+
+        // Gọi hàm fetchMenu khi trang được tải
+        window.onload = fetchMenu;
+    </script>
+</body>
+</html>

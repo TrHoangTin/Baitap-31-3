@@ -2,6 +2,9 @@ const express = require('express');
 const connectDB = require('./config/db');
 const menuRoutes = require('./routes/menu');
 
+const cors = require('cors'); // Thêm cors
+
+
 const app = express();
 
 // Kết nối database
